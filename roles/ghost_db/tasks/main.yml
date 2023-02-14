@@ -1,0 +1,32 @@
+---
+- name: Create MySQL
+  kubernetes.core.k8s:
+    state: present
+    src: mysql/mysql-deployment.yml
+
+- name: PVC MySQL
+  kubernetes.core.k8s:
+    state: present
+    src: mysql/mysql-pvc.yml
+
+- name: Service MySQL
+  kubernetes.core.k8s:
+    state: present
+    src: mysql/mysql-service.yml
+
+#depois resolver isto -- 
+- name: wait for container creation
+  shell: sleep 10
+
+- name: Get MySQL Pod Name
+  shell: kubectl get pods -l tier=database |awk '{ print $1}' | grep -v NAME
+  register: mysqlpod
+
+# isto secalhar passar para o fim do deploy ghost app
+- name: Add Admin User
+  shell: kubectl exec -it {{mysqlpod.stdout}}   -- bash -c "mysql -u ghostuser -pola ghost -e \"update users set name='ascn', password='\\\$2b\\\$10\\\$i9.f1DUYmJb\\\/jqWKxNRPUOcYBNB7Gc.1tzEBo2Y6ZSOX0Ce3Oa5gK', email='ascn@example.com', status='active' where id=1;\""
+
+  
+
+
+ 

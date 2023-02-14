@@ -1,0 +1,4 @@
+---
+
+- name: Delete pvc
+  shell: kubectl delete pvc mysql-pv-claim

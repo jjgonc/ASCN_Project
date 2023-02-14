@@ -1,0 +1,52 @@
+---
+# Deployment for Ghost
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ghost-deployment
+  namespace: default
+  labels:
+    app: ghost
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ghost
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: ghost
+    spec:
+      containers:
+      - name: ghost
+        image: ghost:5.14.1
+        env: # The variables below could be set on a ConfigMap object
+        - name: NODE_ENV
+          value: production
+        - name: database__connection__database 
+          value: ghost
+        - name: database__connection__user
+          value: ghostuser
+        - name: database__connection__password
+          value: "ola"
+        - name: database__connection__host
+          value: mysql-service 
+        - name : ghost__host
+          value: {{ghost_ip}}
+        - name : url
+          value: http://{{ghost_ip}}
+        - name: mail__transport
+          value: "SMTP"
+        - name: mail__options__service
+          value: "Mailgun"
+        - name: mail__options__host
+          value: "smtp.mailgun.org"
+        - name: mail__options__auth__user
+          value: postmaster@sandboxeefe89f202c8488bb5f2aa8554a842ba.mailgun.org
+        - name: mail__options__auth__pass
+          value: {{mail_password}}
+        ports:
+        - containerPort: 2368
+    

@@ -1,0 +1,11 @@
+---
+# Playbook to deploy Ghost and its components
+# TO DO
+- name: Deploy Ghost
+  hosts: localhost
+  vars_files:
+      - mail_secrets.yml
+  roles:
+      - ghost_db
+      - ghost_app
+  
